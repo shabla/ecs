@@ -8,15 +8,45 @@ import App from "./containers/app";
 import "sanitize.css/sanitize.css";
 import "./index.css";
 
-const target = document.querySelector("#root");
+import ECS from "./ecs";
+
+ECS.createGroup("render", "health");
+
+ECS.createEntity().addComponent("health", 100);
+ECS.createEntity()
+	.addComponent("health", 100)
+	.addComponent("render");
+ECS.createEntity("player");
+ECS.createEntity("monster");
+ECS.createEntity("monster");
+ECS.createEntity("monster");
+
+console.log("entities", ECS.filterEntities());
+
+console.log("getEntities()", ECS.getEntities());
+console.log("getEntities(2, 3)", ECS.getEntities(2, 3));
+
+// Systems
+const RenderSystem = (function() {
+	const system = {
+		name: "render"
+	};
+
+	system.update = () => {
+		const entities = ECS.getGroup("render");
+		console.log(`render system update`, entities);
+	};
+
+	return system;
+})();
+
+RenderSystem.update();
 
 render(
 	<Provider store={store}>
 		<ConnectedRouter history={history}>
-			<div>
-				<App />
-			</div>
+			<App />
 		</ConnectedRouter>
 	</Provider>,
-	target
+	document.querySelector("#root")
 );
